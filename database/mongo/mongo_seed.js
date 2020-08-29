@@ -47,7 +47,7 @@ const seedPropertyData = (num) => {
   var propertyArray = [];
   for (var i = 0; i < num; i++) {
     var reviewsArray = [];
-    var numOfReviews = 50
+    var numOfReviews = 60;
     for (var j = 0; j < numOfReviews; j++) {
       var review = {
         reviewId: zeroPad(j + i * 50),
