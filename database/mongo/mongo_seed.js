@@ -40,6 +40,7 @@ const seedUserData = (num) => {
 }
 
 var userArray = seedUserData(2);
+var reviewNumbers = [37, 42, 65, 21, 66, 28, 14, 18, 16, 22, 29, 34, 38]
 
 const seedPropertyData = (num) => {
   // const Property = mongoose.model('Property', propertySchema);
@@ -47,7 +48,7 @@ const seedPropertyData = (num) => {
   var propertyArray = [];
   for (var i = 0; i < num; i++) {
     var reviewsArray = [];
-    var numOfReviews = 60;
+    var numOfReviews = reviewNumbers[Math.floor(i/10000000)];
     for (var j = 0; j < numOfReviews; j++) {
       var review = {
         reviewId: zeroPad(j + i * 50),

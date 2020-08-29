@@ -14,14 +14,14 @@ const bodyParser = require('body-parser');
   const zeroPad = (num) => {
     return num.toString().padStart(9, "0");
   };
-
+  var reviewNumbers = [37, 42, 65, 21, 66, 28, 14, 18, 16, 22, 29, 34, 38]
 
 const seedPropertyData = (num) => {
   // const Property = mongoose.model('Property', propertySchema);
   // const User = mongoose.model('User', userSchema);
   var propertyArray = [];
   for (var i = 0; i < num; i++) {
-    var numOfReviews = 60;
+    var numOfReviews = reviewNumbers[Math.floor(i/10000000)];
     var property = {
       propertyId: zeroPad(i),
       propertyName: faker.address.streetAddress(),
