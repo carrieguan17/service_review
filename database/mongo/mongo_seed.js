@@ -25,8 +25,9 @@ const bodyParser = require('body-parser');
     return num.toString().padStart(9, "0");
   };
 
+var userArray = [];
 const seedUserData = (num) => {
-  var userArray = [];
+  let userString = `userId,userName,profileImg,reviewIds\n`;
   for (var i = 0; i < num; i++) {
     var user = {
       userId: zeroPad(i),
@@ -34,21 +35,27 @@ const seedUserData = (num) => {
       profileImg: faker.image.imageUrl(),
       reviewIds: []
     }
-    userArray.push(user);
+    userString += `${JSON.stringify(user)}\n`;
+    userArray.push(user)
   }
-  return userArray;
+    return new Promise((resolve,reject) => {
+      fs.writeFile(`mongouserdata.csv`, userString, (err, data) => {
+        if(err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    });
 }
 
-var userArray = seedUserData(2);
 var reviewNumbers = [37, 42, 65, 21, 66, 28, 14, 18, 16, 22, 29, 34, 38]
 
 const seedPropertyData = (num) => {
-  // const Property = mongoose.model('Property', propertySchema);
-  // const User = mongoose.model('User', userSchema);
-  var propertyArray = [];
+  let propertyString = `propertyId,propertyName,propertyOwner,propertyOwnerImg,rating,numOfReviews,reviews\n`;
   for (var i = 0; i < num; i++) {
     var reviewsArray = [];
-    var numOfReviews = reviewNumbers[Math.floor(i/10000000)];
+    var numOfReviews = reviewNumbers[Math.floor(i/1000000)];
     for (var j = 0; j < numOfReviews; j++) {
       var review = {
         reviewId: zeroPad(j + i * 50),
@@ -57,7 +64,7 @@ const seedPropertyData = (num) => {
         reviewComment: faker.lorem.sentences()
       };
       reviewsArray.push(review);
-      for (var k = 0; k < num; k++) {
+      for (var k = 0; k < userArray.length; k++) {
         if (userArray[k].userId === review.userId) {
           userArray[k].reviewIds.push(review.reviewId)
         }
@@ -70,57 +77,63 @@ const seedPropertyData = (num) => {
       propertyOwnerImg: faker.image.imageUrl(),
       rating: ((Math.random() * 5) + 3).toFixed(2),
       numOfReviews: numOfReviews,
-      reviews: JSON.stringify(reviewsArray)
+      reviews: reviewsArray
     };
-    propertyArray.push(property);
-  //   return new Promise((resolve,reject) => {
-  //     console.log(property.prepertyName, (err, data) => {
-  //       if(err) {
-  //         reject(err)
-  //       } else {
-  //         resolve(data)
-  //       }
-  //     })
-  //   })
+    propertyString += `${JSON.stringify(property)}\n`;
   }
-  return propertyArray;
+  return new Promise((resolve,reject) => {
+    fs.writeFile(`mongopropertydata.csv`, propertyString, (err, data) => {
+      if(err) {
+        reject(err)
+      } else {
+        resolve(data)
+      }
+    })
+  });
 }
 
 // below is to seed 2 records
+seedUserData(2);
+seedPropertyData(2)
 
-var propertyArray = seedPropertyData(2);
+const used = process.memoryUsage().heapUsed / 1024 / 1024;
+console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
 
-const csvWriterUser = createCsvWriter({
-  path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/mongo/mongouserdata.csv',
-  header: [
-      {id: 'userId', title: 'userId'},
-      {id: 'userName', title: 'userName'},
-      {id: 'profileImg', title: 'profileImg'},
-      {id: 'reviewIds', title: 'reviewIds'},
-  ]
-});
-csvWriterUser.writeRecords(userArray)       // returns a promise
-  .then(() => {console.log('success')})
-  .catch(() => {console.log('error', err)})
-
-const csvWriterProperty = createCsvWriter({
-  path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/mongo/mongopropertydata.csv',
-  header: [
-      {id: 'propertyId', title: 'propertyId'},
-      {id: 'propertyName', title: 'propertyName'},
-      {id: 'propertyOwner', title: 'propertyOwner'},
-      {id: 'propertyOwnerImg', title: 'propertyOwnerImg'},
-      {id: 'rating', title: 'rating'},
-      {id: 'numOfReviews', title: 'numOfReviews'},
-      {id: 'reviews', title: 'reviews'}
-  ]
-});
-csvWriterProperty.writeRecords(propertyArray)       // returns a promise
-  .then(() => {console.log('success')})
-  .catch(() => {console.log('error', err)})
-
-mongoose.disconnect();
+// mongoose.disconnect();
 
 // below is to seed 10M records
 
 // write down the speed
+
+// var propertyArray = seedPropertyData(2);
+
+// const csvWriterUser = createCsvWriter({
+//   path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/mongo/mongouserdata.csv',
+//   header: [
+//       {id: 'userId', title: 'userId'},
+//       {id: 'userName', title: 'userName'},
+//       {id: 'profileImg', title: 'profileImg'},
+//       {id: 'reviewIds', title: 'reviewIds'},
+//   ]
+// });
+// csvWriterUser.writeRecords(userArray)       // returns a promise
+//   .then(() => {console.log('success')})
+  // .catch(() => {console.log('error', err)})
+
+// const csvWriterProperty = createCsvWriter({
+//   path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/mongo/mongopropertydata.csv',
+//   header: [
+//       {id: 'propertyId', title: 'propertyId'},
+//       {id: 'propertyName', title: 'propertyName'},
+//       {id: 'propertyOwner', title: 'propertyOwner'},
+//       {id: 'propertyOwnerImg', title: 'propertyOwnerImg'},
+//       {id: 'rating', title: 'rating'},
+//       {id: 'numOfReviews', title: 'numOfReviews'},
+//       {id: 'reviews', title: 'reviews'}
+//   ]
+// });
+// csvWriterProperty.writeRecords(propertyArray)       // returns a promise
+//   .then(() => {console.log('success')})
+  // .catch(() => {console.log('error', err)})
+
+

@@ -10,7 +10,9 @@
     "react-dev": "webpack -d --watch",
     "start": "nodemon server/index.js",
     "seed": "node db/seed.js",
-    "test": "jest"
+    "test": "jest",
+    "seedm": "node database/mongo/mongo_seed.js",
+    "seedp": "node database/postgres/postgres_seed.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -23,8 +25,10 @@
     "mongo": "^0.1.0",
     "mongoose": "^5.10.2",
     "mysql": "^2.18.1",
+    "node": "^14.8.0",
     "nodemon": "^2.0.4",
     "postgres": "^1.0.2",
+    "promise": "^8.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

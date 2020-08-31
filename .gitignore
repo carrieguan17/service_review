@@ -22,3 +22,11 @@ coverage
 
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 build/
+
+# CSV files during seeding
+mongoproperties.CSV
+mongousers.CSV
+postgresproperties.CSV
+postgresusers.CSV
+postgresreviews.CSV
+
