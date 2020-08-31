@@ -1,3 +1,4 @@
+const fs = require('fs');
 const faker = require('faker');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const bodyParser = require('body-parser');
@@ -17,38 +18,51 @@ const bodyParser = require('body-parser');
   var reviewNumbers = [37, 42, 65, 21, 66, 28, 14, 18, 16, 22, 29, 34, 38]
 
 const seedPropertyData = (num) => {
-  // const Property = mongoose.model('Property', propertySchema);
-  // const User = mongoose.model('User', userSchema);
-  var propertyArray = [];
+  let propertyString = `propertyId,propertyName,propertyOwner,numOfReviews,rating\n`;
   for (var i = 0; i < num; i++) {
-    var numOfReviews = reviewNumbers[Math.floor(i/10000000)];
     var property = {
       propertyId: zeroPad(i),
       propertyName: faker.address.streetAddress(),
       propertyOwner: faker.name.firstName(),
-      numOfReviews: numOfReviews,
+      numOfReviews: reviewNumbers[Math.floor(i/1000000)],
       rating: ((Math.random() * 5) + 3).toFixed(2),
     };
-    propertyArray.push(property);
+    propertyString += `${JSON.stringify(property)}\n`;
   }
-  return propertyArray;
+  return new Promise((resolve,reject) => {
+    fs.writeFile(`postgresspropertydata.csv`, propertyString, (err, data) => {
+      if(err) {
+        reject(err)
+      } else {
+        resolve(data)
+      }
+    })
+  });
 }
 
 const seedUserData = (num) => {
-  var userArray = [];
+  let userString = `userId,userName,profileImg\n`;
   for (var i = 0; i < num; i++) {
     var user = {
       userId: zeroPad(i),
       userName: faker.name.firstName(),
       profileImg: faker.image.imageUrl(),
     }
-    userArray.push(user);
+    userString += `${JSON.stringify(user)}\n`;
   }
-  return userArray;
+  return new Promise((resolve,reject) => {
+    fs.writeFile(`postgressuserdata.csv`, userString, (err, data) => {
+      if(err) {
+        reject(err)
+      } else {
+        resolve(data)
+      }
+    })
+  });
 }
 
 const seedReviewData = (num) => {
-  var reviewArray = [];
+  let reviewString = `reviewId,propertyId,userId,reviewDate,reviewComment\n`;
   for (var i = 0; i < num; i++) {
     var review = {
       reviewId: zeroPad(i),
@@ -57,57 +71,64 @@ const seedReviewData = (num) => {
       reviewDate: faker.date.past(),
       reviewComment: faker.lorem.sentences()
     }
-    reviewArray.push(review);
-    console.log(review)
+    reviewString += `${JSON.stringify(review)}\n`;
   }
-  return reviewArray;
+  return new Promise((resolve,reject) => {
+    fs.writeFile(`postgressreviewdata.csv`, reviewString, (err, data) => {
+      if(err) {
+        reject(err)
+      } else {
+        resolve(data)
+      }
+    })
+  });
 }
 
 // below is to seed 2 records
 
-var propertyArray = seedPropertyData(2);
-var userArray = seedUserData(2);
-var reviewArray = seedReviewData(2);
+seedPropertyData(2);
+seedUserData(2);
+seedReviewData(2);
 
-const csvWriterProperty = createCsvWriter({
-  path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/postgres/postgrespropertydata.csv',
-  header: [
-      {id: 'propertyId', title: 'propertyId'},
-      {id: 'propertyName', title: 'propertyName'},
-      {id: 'propertyOwner', title: 'propertyOwner'},
-      {id: 'rating', title: 'rating'},
-      {id: 'numOfReviews', title: 'numOfReviews'},
-  ]
-});
-csvWriterProperty.writeRecords(propertyArray)       // returns a promise
-  .then(() => {console.log('success')})
-  .catch(() => {console.log('error', err)})
+// const csvWriterProperty = createCsvWriter({
+//   path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/postgres/postgrespropertydata.csv',
+//   header: [
+//       {id: 'propertyId', title: 'propertyId'},
+//       {id: 'propertyName', title: 'propertyName'},
+//       {id: 'propertyOwner', title: 'propertyOwner'},
+//       {id: 'rating', title: 'rating'},
+//       {id: 'numOfReviews', title: 'numOfReviews'},
+//   ]
+// });
+// csvWriterProperty.writeRecords(propertyArray)       // returns a promise
+//   .then(() => {console.log('success')})
+//   .catch(() => {console.log('error', err)})
 
-const csvWriterUser = createCsvWriter({
-  path: '//Users/berryblu/Desktop/assignment/exercise/reviews-section/database/postgres/postgresuserdata.csv',
-  header: [
-      {id: 'userId', title: 'userId'},
-      {id: 'userName', title: 'userName'},
-      {id: 'profileImg', title: 'profileImg'},
-  ]
-});
-csvWriterUser.writeRecords(userArray)       // returns a promise
-  .then(() => {console.log('success')})
-  .catch(() => {console.log('error', err)})
+// const csvWriterUser = createCsvWriter({
+//   path: '//Users/berryblu/Desktop/assignment/exercise/reviews-section/database/postgres/postgresuserdata.csv',
+//   header: [
+//       {id: 'userId', title: 'userId'},
+//       {id: 'userName', title: 'userName'},
+//       {id: 'profileImg', title: 'profileImg'},
+//   ]
+// });
+// csvWriterUser.writeRecords(userArray)       // returns a promise
+//   .then(() => {console.log('success')})
+//   .catch(() => {console.log('error', err)})
 
-const csvWriterReview = createCsvWriter({
-  path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/postgres/postgresreviewdata.csv',
-  header: [
-      {id: 'reviewId', title: 'reviewId'},
-      {id: 'propertyId', title: 'propertyId'},
-      {id: 'userId', title: 'userId'},
-      {id: 'reviewDate', title: 'reviewDate'},
-      {id: 'reviewComment', title: 'reviewComment'},
-  ]
-});
-csvWriterReview.writeRecords(reviewArray)       // returns a promise
-  .then(() => {console.log('success')})
-  .catch(() => {console.log('error', err)})
+// const csvWriterReview = createCsvWriter({
+//   path: '/Users/berryblu/Desktop/assignment/exercise/reviews-section/database/postgres/postgresreviewdata.csv',
+//   header: [
+//       {id: 'reviewId', title: 'reviewId'},
+//       {id: 'propertyId', title: 'propertyId'},
+//       {id: 'userId', title: 'userId'},
+//       {id: 'reviewDate', title: 'reviewDate'},
+//       {id: 'reviewComment', title: 'reviewComment'},
+//   ]
+// });
+// csvWriterReview.writeRecords(reviewArray)       // returns a promise
+//   .then(() => {console.log('success')})
+//   .catch(() => {console.log('error', err)})
 
 // below is to seed 10M records
 
