@@ -140,13 +140,13 @@ const bodyParser = require('body-parser');
 //   userArray.push(user)
 // };
 
-var reviewNumbers = [37, 42, 65, 21, 66, 28, 14, 18, 16, 22, 29, 34, 38];
+var reviewNumbers = [37, 42, 45, 21, 36, 28, 14, 18, 16, 22, 29, 34, 38];
 
 const writeProperties = fs.createWriteStream('mongoproperties.csv');
 writeProperties.write('propertyId,propertyName,propertyOwner,propertyOwnerImg,rating,numOfReviews,reviews\n', 'utf8');
 
-const writeTenMillionProperties = (writer, encoding, callback) => {
-  let i = 10000000;
+const writeMProperties = (writer, encoding, callback) => {
+  let i = 250000;
   let id = 0;
   function write() {
     let ok = true;
@@ -154,7 +154,7 @@ const writeTenMillionProperties = (writer, encoding, callback) => {
       i -= 1;
       id += 1;
       var reviewsArray = [];
-      var numOfReviews = reviewNumbers[Math.floor(i/1000000)];
+      var numOfReviews = reviewNumbers[i%11];
       for (var j = 0; j < numOfReviews; j++) {
         var review = {
           reviewId: zeroPad(j + i * numOfReviews),
@@ -196,48 +196,77 @@ const writeTenMillionProperties = (writer, encoding, callback) => {
 write()
 }
 
-writeTenMillionProperties(writeProperties, 'utf-8', () => {
+writeMProperties(writeProperties, 'utf-8', () => {
   writeProperties.end();
 });
 
 // write users
-const writeUsers = fs.createWriteStream('mongousers.csv');
-writeUsers.write('userId,userName,profileImg,reviewIds\n', 'utf8');
+// var imgUrl = [
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/ironman.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/45_million.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/elegance.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/beachhouse.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/petra.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/modernestate.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/malibu.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/belair.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/spectacular.jpg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/maliburesidence.jpeg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/hillsidevilla.jpeg",
+//   "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/villapaullina.jpg",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/fallguys_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/skater_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/hellpoint_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/outerworlds_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/deathstranding_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/fallenorder_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/destroyhumans_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/tsushima_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/snowrunner_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/bugsbunny_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/phantommenace_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/goosebumps_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/lbpkarting_thumbnail.webp",
+//   "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/bioshock_thumbnail.webp"
+// ]
 
-const writeTenMillionUsers = (writer, encoding, callback) => {
-  let i = 10000000;
-  let index = 0;
-  function write() {
-    let ok = true;
-    do {
-      i -= 1;
-      id += 1;
-      var user = {
-        userId: zeroPad(id),
-        userName: faker.name.firstName(),
-        profileImg: faker.image.imageUrl(),
-      };
-      const userString = `${JSON.stringify(user)}\n`;
-      if (i === 0) {
-        writer.write(userString, encoding, callback);
-      } else {
-// see if we should continue, or wait
-// don't pass the callback, because we're not done yet.
-        ok = writer.write(userString, encoding);
-      }
-    } while (i > 0 && ok);
-    if (i > 0) {
-// had to stop early!
-// write some more once it drains
-      writer.once('drain', write);
-    }
-  }
-write()
-}
+// const writeUsers = fs.createWriteStream('mongousers.csv');
+// writeUsers.write('userId,userName,profileImg,reviewIds\n', 'utf8');
 
-writeTenMillionUsers(writeUsers, 'utf-8', () => {
-  writeUsers.end();
-});
+// const writeTenMillionUsers = (writer, encoding, callback) => {
+//   let i = 10000000;
+//   let id = 0;
+//   function write() {
+//     let ok = true;
+//     do {
+//       i -= 1;
+//       id += 1;
+//       var user = {
+//         userId: zeroPad(id),
+//         userName: faker.name.firstName(),
+//         profileImg: imgUrl[i%26],
+//       };
+//       const userString = `${JSON.stringify(user)}\n`;
+//       if (i === 0) {
+//         writer.write(userString, encoding, callback);
+//       } else {
+// // see if we should continue, or wait
+// // don't pass the callback, because we're not done yet.
+//         ok = writer.write(userString, encoding);
+//       }
+//     } while (i > 0 && ok);
+//     if (i > 0) {
+// // had to stop early!
+// // write some more once it drains
+//       writer.once('drain', write);
+//     }
+//   }
+// write()
+// }
+
+// writeTenMillionUsers(writeUsers, 'utf-8', () => {
+//   writeUsers.end();
+// });
 
 
 // below is to seed 2 records
