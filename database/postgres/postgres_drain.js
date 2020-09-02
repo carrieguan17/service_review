@@ -5,7 +5,8 @@ const zeroPad = (num) => {
   return num.toString().padStart(9, "0");
 };
 
-var reviewNumbers = [37, 42, 65, 21, 66, 28, 14, 18, 16, 22, 29, 34, 38];
+var reviewNumbers = [17, 12, 45, 16, 8, 4, 7, 6, 9, 5, 3];
+var ratingNumbers = [4.62, 3.27, 3.96, 4.39, 4.23, 4.88]
 
 const writeProperties = fs.createWriteStream('postgresproperties.csv');
 writeProperties.write('propertyId,propertyName,propertyOwner,numOfReviews,rating\n', 'utf8');
@@ -18,14 +19,7 @@ const writeTenMillionProperties = (writer, encoding, callback) => {
     do {
       i -= 1;
       id += 1;
-      var property = {
-        propertyId: zeroPad(id),
-        propertyName: faker.address.streetAddress(),
-        propertyOwner: faker.name.firstName(),
-        numOfReviews: reviewNumbers[Math.floor(i/1000000)],
-        rating: ((Math.random() * 5) + 3).toFixed(2),
-      };
-      const propertyString = `${JSON.stringify(property)}\n`;
+      const propertyString = `${id},${faker.address.streetAddress()},${faker.name.firstName()},${reviewNumbers[i%11]},${ratingNumbers[i%6]}\n`;
       if (i === 0) {
         writer.write(propertyString, encoding, callback);
       } else {
@@ -48,23 +42,48 @@ writeTenMillionProperties(writeProperties, 'utf-8', () => {
 });
 
 // write users
+
+var imgUrl = [
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/ironman.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/45_million.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/elegance.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/beachhouse.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/petra.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/modernestate.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/malibu.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/belair.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/spectacular.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/maliburesidence.jpeg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/hillsidevilla.jpeg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/villapaullina.jpg",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/fallguys_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/skater_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/hellpoint_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/outerworlds_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/deathstranding_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/fallenorder_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/destroyhumans_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/tsushima_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/snowrunner_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/bugsbunny_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/phantommenace_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/goosebumps_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/lbpkarting_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/bioshock_thumbnail.webp"
+];
+
 const writeUsers = fs.createWriteStream('postgresusers.csv');
 writeUsers.write('userId,userName,profileImg\n', 'utf8');
 
 const writeTenMillionUsers = (writer, encoding, callback) => {
   let i = 10000000;
-  let index = 0;
+  let id = 0;
   function write() {
     let ok = true;
     do {
       i -= 1;
       id += 1;
-      var user = {
-        userId: zeroPad(id),
-        userName: faker.name.firstName(),
-        profileImg: faker.image.imageUrl(),
-      };
-      const userString = `${JSON.stringify(user)}\n`;
+      const userString = `${id},${faker.name.firstName()},${imgUrl[i%26]}\n`;
       if (i === 0) {
         writer.write(userString, encoding, callback);
       } else {
@@ -93,20 +112,13 @@ writeReviews.write('reviewId,propertyId,userId,reviewDate,reviewComment\n', 'utf
 
 const writeTenMillionReviews = (writer, encoding, callback) => {
   let i = 10000000;
-  let index = 0;
+  let id = 0;
   function write() {
     let ok = true;
     do {
       i -= 1;
       id += 1;
-      var review = {
-        reviewId: zeroPad(i),
-        propertyId: zeroPad(faker.random.number()),
-        userId: zeroPad(faker.random.number()),
-        reviewDate: faker.date.past(),
-        reviewComment: faker.lorem.sentences()
-      };
-      const reviewString = `${JSON.stringify(review)}\n`;
+      const reviewString = `${id},${faker.random.number()},${faker.random.number()},${faker.date.past()},${faker.lorem.sentences()}\n`;
       if (i === 0) {
         writer.write(reviewString, encoding, callback);
       } else {

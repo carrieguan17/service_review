@@ -140,13 +140,14 @@ const bodyParser = require('body-parser');
 //   userArray.push(user)
 // };
 
-var reviewNumbers = [37, 42, 45, 21, 36, 28, 14, 18, 16, 22, 29, 34, 38];
+var reviewNumbers = [17, 12, 45, 16, 8, 4, 7, 6, 9, 5, 3];
+var ratingNumbers = [4.62, 3.27, 3.96, 4.39, 4.23, 4.88]
 
 const writeProperties = fs.createWriteStream('mongoproperties.csv');
-writeProperties.write('propertyId,propertyName,propertyOwner,propertyOwnerImg,rating,numOfReviews,reviews\n', 'utf8');
+writeProperties.write('propertyId,propertyName,propertyOwner,rating,numOfReviews,reviews\n', 'utf8');
 
 const writeMProperties = (writer, encoding, callback) => {
-  let i = 250000;
+  let i = 10000000;
   let id = 0;
   function write() {
     let ok = true;
@@ -155,30 +156,11 @@ const writeMProperties = (writer, encoding, callback) => {
       id += 1;
       var reviewsArray = [];
       var numOfReviews = reviewNumbers[i%11];
+      var reviews = '';
       for (var j = 0; j < numOfReviews; j++) {
-        var review = {
-          reviewId: zeroPad(j + i * numOfReviews),
-          userId: zeroPad(faker.random.number()),
-          reviewDate: faker.date.past(),
-          reviewComment: faker.lorem.sentences()
-        };
-        reviewsArray.push(review);
-        // for (var k = 0; k < userArray.length; k++) {
-        //   if (userArray[k].userId === review.userId) {
-        //     userArray[k].reviewIds.push(review.reviewId)
-        //   }
-        // }
+        reviews += `{reviewId:${j + i * numOfReviews},userID:${faker.random.number()},reviewDate:${faker.date.past()},reviewComment:${faker.lorem.sentences()}},\n`
       };
-      var property = {
-        propertyId: zeroPad(id),
-        propertyName: faker.address.streetAddress(),
-        propertyOwner: faker.name.firstName(),
-        propertyOwnerImg: faker.image.imageUrl(),
-        rating: ((Math.random() * 5) + 3).toFixed(2),
-        numOfReviews: numOfReviews,
-        reviews: reviewsArray
-      };
-      const propertyString = `${JSON.stringify(property)}\n`;
+      const propertyString = `${id},${faker.address.streetAddress()},${faker.name.firstName()},${ratingNumbers[i%6]},[${reviews}]\n`;
       if (i === 0) {
         writer.write(propertyString, encoding, callback);
       } else {
@@ -241,12 +223,7 @@ writeMProperties(writeProperties, 'utf-8', () => {
 //     do {
 //       i -= 1;
 //       id += 1;
-//       var user = {
-//         userId: zeroPad(id),
-//         userName: faker.name.firstName(),
-//         profileImg: imgUrl[i%26],
-//       };
-//       const userString = `${JSON.stringify(user)}\n`;
+//       const userString = `${id},${faker.name.firstName()},${imgUrl[i%26]}\n`;
 //       if (i === 0) {
 //         writer.write(userString, encoding, callback);
 //       } else {
@@ -268,11 +245,10 @@ writeMProperties(writeProperties, 'utf-8', () => {
 //   writeUsers.end();
 // });
 
-
 // below is to seed 2 records
 
-const used = process.memoryUsage().heapUsed / 1024 / 1024 ;
-console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+// const used = process.memoryUsage().heapUsed / 1024 / 1024 ;
+// console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
 
 // mongoose.disconnect();
 

@@ -5,7 +5,6 @@ let propertySchema = new mongoose.Schema({
   propertyId: String,
   propertyName: String,
   propertyOwner: String,
-  propertyOwnerImg: String,
   rating: Number,
   numOfReviews: Number,
   reviews: [{
@@ -24,8 +23,7 @@ let propertySchema = new mongoose.Schema({
 let userSchema = new mongoose.Schema({
   userId: String,
   userName: String,
-  profileImg: String,
-  reviewIds: []
+  profileImg: String
 });
 
 module.exports = {
