@@ -9,11 +9,12 @@ app.get('api/user', (req, res) => {
   let userId = {"userId": req.body["userId"]}
   User.find(userId, (err, users) => {
     if(err) {
-      callback(err)
-      console.log(`server get user info err`)
+      console.log(err, `server get user info err`);
+      res.end();
     } else {
-      callback(null, users)
-      console.log(`server get user info success`)
+      console.log(`server get user info success`);
+      res.send(null, users);
+      res.end;
     }
   })
 })
