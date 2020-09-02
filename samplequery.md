@@ -10,9 +10,11 @@ app.get('api/user', (req, res) => {
   User.find(userId, (err, users) => {
     if(err) {
       console.log(err, `server get user info err`);
+      res.status(400);
       res.end();
     } else {
       console.log(`server get user info success`);
+      res.status(200);
       res.send(null, users);
       res.end;
     }
