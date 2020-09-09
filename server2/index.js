@@ -1,4 +1,5 @@
 // dependencies
+require('newrelic');
 const express = require('express');
 const app = express();
 PORT = 2250;
@@ -33,10 +34,11 @@ app.use(bodyparser.urlencoded({ extended: false }));
 // })
 
 app.get ('/reviews', (req, res) => {
+  let num = Math.floor(Math.random() * 1000)
   let query = `SELECT review_date, review_comment, user_name, user_profileImg
   FROM reviews
   INNER JOIN users
-  ON reviews.user_id = users.user_id AND property_id = ${req.body.num};`
+  ON reviews.user_id = users.user_id AND property_id = ${num};`
   DB.query(query, (err, results) => {
     if (err) {
       console.log(err, `Server get err`)
