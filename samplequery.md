@@ -15,7 +15,7 @@ app.get('api/user', (req, res) => {
     } else {
       console.log(`server get user info success`);
       res.status(200);
-      res.send(null, users);
+      res.send(null, users.data);
       res.end;
     }
   })

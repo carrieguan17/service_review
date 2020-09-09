@@ -12,7 +12,8 @@
     "seed": "node db/seed.js",
     "test": "jest",
     "seedm": "node database/mongo/mongo_seed.js",
-    "seedp": "node database/postgres/postgres_seed.js"
+    "seedp": "node database/postgres/postgres_seed.js",
+    "start-server": "nodemon server2/index.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -27,7 +28,9 @@
     "mysql": "^2.18.1",
     "node": "^14.8.0",
     "nodemon": "^2.0.4",
+    "pg": "^8.3.3",
     "postgres": "^1.0.2",
+    "postgresql": "0.0.1",
     "promise": "^8.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"

@@ -26,6 +26,8 @@ build/
 # CSV files during seeding
 mongoproperties.CSV
 mongousers.CSV
+mongoreviews.csv
+mongoproperties.json
 postgresproperties.CSV
 postgresusers.CSV
 postgresreviews.CSV

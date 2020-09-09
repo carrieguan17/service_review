@@ -4,6 +4,9 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const bodyParser = require('body-parser');
+const userSchema = require('./schema.js');
+const propertySchema = require('./schema.js');
+const reviewSchema = require('./schema.js');
 
 // create db connection
   // // below is to establishe DB:

@@ -141,10 +141,38 @@ const bodyParser = require('body-parser');
 // };
 
 var reviewNumbers = [17, 12, 45, 16, 8, 4, 7, 6, 9, 5, 3];
-var ratingNumbers = [4.62, 3.27, 3.96, 4.39, 4.23, 4.88]
+var ratingNumbers = [4.62, 3.27, 3.96, 4.39, 4.23, 4.88];
+var imgUrl = [
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/ironman.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/45_million.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/elegance.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/beachhouse.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/petra.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/modernestate.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/malibu.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/belair.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/spectacular.jpg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/maliburesidence.jpeg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/hillsidevilla.jpeg",
+  "https://fecmoreplacestostayimages.s3-us-west-1.amazonaws.com/image/villapaullina.jpg",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/fallguys_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/skater_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/hellpoint_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/outerworlds_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/deathstranding_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/fallenorder_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/destroyhumans_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/tsushima_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/snowrunner_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/bugsbunny_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/phantommenace_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/goosebumps_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/lbpkarting_thumbnail.webp",
+  "https://video-carousel-thumbnails.s3-us-west-1.amazonaws.com/bioshock_thumbnail.webp"
+]
 
 const writeProperties = fs.createWriteStream('mongoproperties.csv');
-writeProperties.write('propertyId,propertyName,propertyOwner,rating,numOfReviews,reviews\n', 'utf8');
+// writeProperties.write('propertyId,propertyName,rating,numOfReviews,reviews\n', 'ascii');
 
 const writeMProperties = (writer, encoding, callback) => {
   let i = 10000000;
@@ -155,12 +183,28 @@ const writeMProperties = (writer, encoding, callback) => {
       i -= 1;
       id += 1;
       var reviewsArray = [];
-      var numOfReviews = reviewNumbers[i%11];
-      var reviews = '';
+      var numOfReviews = reviewNumbers[id%11];
       for (var j = 0; j < numOfReviews; j++) {
-        reviews += `{reviewId:${j + i * numOfReviews},userID:${faker.random.number()},reviewDate:${faker.date.past()},reviewComment:${faker.lorem.sentences()}},\n`
+        var review = {
+          reviewId: j + id,
+          user: {
+            userId: faker.random.number(),
+            userName: faker.name.firstName(),
+            profileImg: imgUrl[id*5%26]
+          },
+          reviewDate: faker.date.month(),
+          reviewComment: faker.lorem.sentences()
+        }
+        reviewsArray.push(review)
       };
-      const propertyString = `${id},${faker.address.streetAddress()},${faker.name.firstName()},${ratingNumbers[i%6]},[${reviews}]\n`;
+      var property = {
+        propertyId: id,
+        propertyName: faker.address.streetAddress(),
+        rating: ratingNumbers[id%6],
+        numOfReviews: numOfReviews,
+        reviews: reviewsArray
+      }
+      const propertyString = JSON.stringify(property) + '\n';
       if (i === 0) {
         writer.write(propertyString, encoding, callback);
       } else {
@@ -178,9 +222,46 @@ const writeMProperties = (writer, encoding, callback) => {
 write()
 }
 
-writeMProperties(writeProperties, 'utf-8', () => {
+writeMProperties(writeProperties, 'ascii', () => {
   writeProperties.end();
 });
+
+// write reviews
+
+// var reviewNumbers = [17, 12, 45, 16, 8, 4, 7, 6, 9, 5, 3];
+
+// const writeReviews = fs.createWriteStream('mongoreviews.csv');
+// writeReviews.write('rewviewId,propertyId,userId,reviewDate,reviewComment\n', 'ascii');
+
+// const writeMReviews = (writer, encoding, callback) => {
+//   let i = 50000000;
+//   let id = 0;
+//   function write() {
+//     let ok = true;
+//     do {
+//       i -= 1;
+//       id += 1;
+//       const reviewString = `${id},${1},${1},${faker.date.month(), 2019},${faker.lorem.sentences()}\n`;
+//       if (i === 0) {
+//         writer.write(reviewString, encoding, callback);
+//       } else {
+// // see if we should continue, or wait
+// // don't pass the callback, because we're not done yet.
+//         ok = writer.write(reviewString, encoding);
+//       }
+//     } while (i > 0 && ok);
+//     if (i > 0) {
+// // had to stop early!
+// // write some more once it drains
+//       writer.once('drain', write);
+//     }
+//   }
+// write()
+// };
+
+// writeMReviews(writeReviews, 'ascii', () => {
+//   writeReviews.end();
+// });
 
 // write users
 // var imgUrl = [
