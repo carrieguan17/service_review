@@ -1,8 +1,8 @@
 const { Client } = require('pg')
 const client = new Client({
-  user: 'berryblu',
-  host: 'localhost',
-  database: 'postgres',
+  user: 'ec2-user',
+  host: '13.52.163.55',
+  database: 'review',
   port: 5432
 })
 client.connect((err) => {
@@ -13,3 +13,4 @@ client.connect((err) => {
   }
 })
 module.exports = client;
+// change test
